@@ -59,7 +59,7 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 	/*
 	 * Give the reset button a chance to interrupt the normal boot
 	 * before the network recovery probe starts.  The button is
-	 * active low: hold it for ~0.4s any time during this 8s window
+	 * active low: hold it for ~0.4s any time during this 5s window
 	 * to enter web recovery.  A negative return from the gpio read
 	 * (device lookup error) must not be mistaken for a released
 	 * button, so only a positive level clears the press counter.
@@ -72,7 +72,7 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 		printf("[mtkautoboot] checking reset button (gpio%d = %d) ...\n",
 		       MT7621_BUTTON_RESET, level);
 
-		for (i = 0; i < 40; i++) {
+		for (i = 0; i < 25; i++) {
 			level = gpio_get_value(MT7621_BUTTON_RESET);
 			if (level == 0)
 				pressed++;
