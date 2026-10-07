@@ -63,4 +63,11 @@
 #define CONFIG_ARP_TIMEOUT		1000
 #define CONFIG_NET_RETRY_COUNT		2
 
+/* PCIe/WiFi reset pins (E8820V2, active LOW)
+ * Pulse low-then-high in last_stage_init so both WiFi chips go
+ * through a full reset cycle before the kernel takes over.
+ */
+#define MT7621_WIFI_RESET_2G		19
+#define MT7621_WIFI_RESET_5G		26
+
 #endif  /* __CONFIG_MT7621_COMMON_H */

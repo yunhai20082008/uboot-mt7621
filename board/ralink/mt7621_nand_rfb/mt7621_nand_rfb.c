@@ -90,6 +90,19 @@ int last_stage_init(void)
 	#define MT7621_UNUSED_PIN_LIST {}
 #endif
 
+	/* Pulse WiFi PCIe reset pins (active LOW): hold in reset, then
+	 * release so the radio chips boot before the kernel takes over */
+#ifdef MT7621_WIFI_RESET_2G
+	gpio_output_init(MT7621_WIFI_RESET_2G, 0, "reset-2g");
+	mdelay(10);
+	gpio_set_value(MT7621_WIFI_RESET_2G, 1);
+#endif
+#ifdef MT7621_WIFI_RESET_5G
+	gpio_output_init(MT7621_WIFI_RESET_5G, 0, "reset-5g");
+	mdelay(10);
+	gpio_set_value(MT7621_WIFI_RESET_5G, 1);
+#endif
+
 	int pinlist[] = MT7621_UNUSED_PIN_LIST;
 
 	pins_unused_init(pinlist, sizeof(pinlist)/sizeof(int));
