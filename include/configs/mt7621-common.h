@@ -48,4 +48,19 @@
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200, \
 					  230400, 460800, 921600 }
 
+/* Custom version string, printed right after the SPL banner (first serial
+ * output on every MT7621 board) and appended to the full U-Boot banner via
+ * CONFIG_IDENT_STRING.
+ */
+#define MT7621_UBOOT_VERSION		"Fitten-UB-XYZ-VER1"
+
+/* Network
+ * Shorten ARP retry (default: 5s x 5 = 25s per attempt) so the
+ * net-recovery probe in mtkautoboot fails fast (~2s per ping)
+ * when the recovery host is not present. TFTP still uses its own
+ * 5s packet timeout, so normal transfers are not affected.
+ */
+#define CONFIG_ARP_TIMEOUT		1000
+#define CONFIG_NET_RETRY_COUNT		2
+
 #endif  /* __CONFIG_MT7621_COMMON_H */

@@ -17,5 +17,9 @@ void __noreturn board_init_f(ulong dummy)
 
 	preloader_console_init();
 
+	/* Print custom version right after the SPL banner, the very first
+	 * serial output on every MT7621 board */
+	puts(MT7621_UBOOT_VERSION "\n");
+
 	board_init_r(NULL, 0);
 }
