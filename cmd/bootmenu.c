@@ -12,6 +12,17 @@
 #include <malloc.h>
 #include <linux/string.h>
 
+#include <mt7621_portled.h>
+
+/*
+ * Weak default no-op: overridden by board common code (mtk_portled.c)
+ * to switch the ethernet port LEDs into "console interrupt" blink mode
+ * when a key press stops the autoboot countdown.
+ */
+__weak void board_bootmenu_interrupted(void)
+{
+}
+
 /* maximum bootmenu entries */
 #define MAX_COUNT	99
 
@@ -116,6 +127,7 @@ static void bootmenu_autoboot_loop(struct bootmenu_data *menu,
 			}
 
 			menu->delay = -1;
+			board_bootmenu_interrupted();
 			c = getc();
 
 			switch (c) {

@@ -13,11 +13,16 @@
 
 #include "../common/dual_image.h"
 
+#include <mt7621_portled.h>
+
 static int do_mtkboardboot(cmd_tbl_t *cmdtp, int flag, int argc,
 	char *const argv[])
 {
 	char cmd[128];
 	const char *ep;
+
+	/* Leaving recovery mode: restore the default port LED behavior */
+	mt7621_portled_set(PORTLED_MODE_NONE);
 
 #ifdef CONFIG_MTK_DUAL_IMAGE_SUPPORT
 	dual_image_check();
@@ -54,6 +59,7 @@ static int do_mtkboardboot(cmd_tbl_t *cmdtp, int flag, int argc,
 #ifndef CONFIG_WEBUI_FAILSAFE_ON_AUTOBOOT_FAIL
 	return CMD_RET_FAILURE;
 #else
+	mt7621_portled_set(PORTLED_MODE_HTTPD);
 	return run_command("httpd", 0);
 #endif
 }

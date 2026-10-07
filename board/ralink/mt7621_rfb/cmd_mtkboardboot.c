@@ -20,6 +20,8 @@
 
 #include "../common/dual_image.h"
 
+#include <mt7621_portled.h>
+
 static struct spi_flash *get_sf_dev(void)
 {
 	unsigned int bus = CONFIG_SF_DEFAULT_BUS;
@@ -58,6 +60,9 @@ static int mtkboardboot(void)
 	uint32_t load_addr, size;
 	u8 pnum;
 	int ret;
+
+	/* Leaving recovery mode: restore the default port LED behavior */
+	mt7621_portled_set(PORTLED_MODE_NONE);
 
 #ifdef CONFIG_MTK_DUAL_IMAGE_SUPPORT
 	dual_image_check();
@@ -151,6 +156,7 @@ static int do_mtkboardboot(cmd_tbl_t *cmdtp, int flag, int argc,
 #ifndef CONFIG_WEBUI_FAILSAFE_ON_AUTOBOOT_FAIL
 	return CMD_RET_FAILURE;
 #else
+	mt7621_portled_set(PORTLED_MODE_HTTPD);
 	return run_command("httpd", 0);
 #endif
 }

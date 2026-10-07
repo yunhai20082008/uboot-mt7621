@@ -20,7 +20,18 @@
 
 #include "mt7621_eth.h"
 
+#include <mt7621_portled.h>
+
 DECLARE_GLOBAL_DATA_PTR;
+
+/*
+ * Weak default no-op: overridden by board common code (mtk_portled.c)
+ * to re-apply the recovery-mode port LED blink after every MT7530
+ * software reset performed here.
+ */
+__weak void mt7621_portled_reapply(struct mii_dev *bus)
+{
+}
 
 #define NUM_TX_DESC		24
 #define NUM_RX_DESC		24
@@ -515,6 +526,13 @@ static void mt7530_setup(struct mt7621_eth_priv *priv)
 			REG_SET_VAL(STAG_VPID, 0x8100) |
 			REG_SET_VAL(VLAN_ATTR, VLAN_ATTR_USER));
 	}
+
+	/*
+	 * The switch soft-reset above also clears the LED behavior
+	 * registers.  Re-apply the current port LED mode (no-op unless a
+	 * recovery mode set it before).
+	 */
+	mt7621_portled_reapply(priv->mdio_bus);
 }
 
 static void mt7621_eth_fifo_init(struct mt7621_eth_priv *priv)

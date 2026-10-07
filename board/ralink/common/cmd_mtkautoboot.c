@@ -9,6 +9,8 @@
 #include <asm-generic/gpio.h>
 #include <led.h>
 
+#include <mt7621_portled.h>
+
 #if defined(CONFIG_BOARD_MT7621_NAND_TEMPLATE) || \
 	defined(CONFIG_BOARD_MT7621_NOR_TEMPLATE)
 #define MT7621_USE_GPIO_LED
@@ -167,6 +169,7 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 			rc = run_command(cmd, 0);
 			if (rc == 0) {
 				printf("[mtkautoboot] host %s reachable, entering web recovery\n", probe);
+				mt7621_portled_set(PORTLED_MODE_HTTPD);
 				run_command("httpd", 0);
 				return 0;
 			}
@@ -205,6 +208,7 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 	if (i >= 5 && i < 30) {
 #endif
 		printf("Enter web failsafe mode by pressing reset button\n");
+		mt7621_portled_set(PORTLED_MODE_HTTPD);
 		run_command("httpd", 0);
 	}
 
