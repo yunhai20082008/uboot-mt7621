@@ -36,6 +36,13 @@ int mt7621_portled_set(enum mt7621_portled_mode mode);
 void mt7621_portled_reapply(struct mii_dev *bus);
 
 /*
+ * Software-blink driver for recovery modes.  Called from the busy-wait
+ * loops of net_loop() and bootmenu; toggles the PHY force_on bit with
+ * a mode-specific period.  No-op unless a recovery mode is active.
+ */
+void mt7621_portled_tick(void);
+
+/*
  * Called when a key press stops the autoboot countdown of the bootmenu
  * (weak default in cmd/bootmenu.c is a no-op).
  */

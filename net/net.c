@@ -101,6 +101,17 @@
 #endif
 #include <watchdog.h>
 #include <linux/compiler.h>
+
+#include <mt7621_portled.h>
+
+/*
+ * Weak default no-op: overridden by board common code (mtk_portled.c)
+ * to software-blink the port LEDs while a recovery mode is active.
+ */
+__weak void mt7621_portled_tick(void)
+{
+}
+
 #include "arp.h"
 #include "bootp.h"
 #include "cdp.h"
@@ -570,6 +581,8 @@ restart:
 #ifdef CONFIG_SHOW_ACTIVITY
 		show_activity(1);
 #endif
+		mt7621_portled_tick();
+
 		if (arp_timeout_check() > 0)
 			time_start = get_timer(0);
 

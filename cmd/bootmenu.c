@@ -122,6 +122,7 @@ static void bootmenu_autoboot_loop(struct bootmenu_data *menu,
 		for (i = 0; i < 100; ++i) {
 			if (!tstc()) {
 				WATCHDOG_RESET();
+				mt7621_portled_tick();
 				mdelay(10);
 				continue;
 			}
@@ -176,6 +177,7 @@ static void bootmenu_loop(struct bootmenu_data *menu,
 
 	while (!tstc()) {
 		WATCHDOG_RESET();
+		mt7621_portled_tick();
 		mdelay(10);
 	}
 
