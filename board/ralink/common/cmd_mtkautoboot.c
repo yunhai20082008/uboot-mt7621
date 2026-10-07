@@ -58,22 +58,34 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 #ifdef CONFIG_FAILSAFE_ON_BUTTON
 	/*
 	 * Give the reset button a chance to interrupt the normal boot
-	 * before the network recovery probe starts: holding it for at
-	 * least ~1s any time during this window enters web recovery.
+	 * before the network recovery probe starts.  The button is
+	 * active low: hold it for ~0.4s any time during this 8s window
+	 * to enter web recovery.  A negative return from the gpio read
+	 * (device lookup error) must not be mistaken for a released
+	 * button, so only a positive level clears the press counter.
 	 */
 	{
 		int pressed = 0;
+		int level;
 
-		printf("[mtkautoboot] checking reset button ...\n");
-		for (i = 0; i < 15; i++) {
-			if (gpio_get_value(MT7621_BUTTON_RESET) != 0)
+		level = gpio_get_value(MT7621_BUTTON_RESET);
+		printf("[mtkautoboot] checking reset button (gpio%d = %d) ...\n",
+		       MT7621_BUTTON_RESET, level);
+
+		for (i = 0; i < 40; i++) {
+			level = gpio_get_value(MT7621_BUTTON_RESET);
+			if (level == 0)
+				pressed++;
+			else if (level > 0)
+				pressed = 0;
+
+			if (pressed >= 2) {
+				mtk_button_webfailsafe();
 				break;
-			pressed++;
+			}
+
 			mdelay(200);
 		}
-
-		if (pressed >= 5)
-			mtk_button_webfailsafe();
 	}
 #endif
 
