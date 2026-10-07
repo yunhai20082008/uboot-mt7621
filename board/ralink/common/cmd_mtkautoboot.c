@@ -134,6 +134,48 @@ static int do_mtkautoboot(cmd_tbl_t *cmdtp, int flag, int argc,
 	const char *delay_str;
 	u32 delay = CONFIG_MTKAUTOBOOT_DELAY;
 
+#ifdef CONFIG_MTKAUTOBOOT_NET_RECOVERY
+{
+	const char *skip = env_get("mtk_skip_netrecovery");
+	const char *probe = env_get("mtk_recovery_probe");
+	int do_probe = 1;
+
+	if (skip && !strcmp(skip, "1")) {
+		printf("[mtkautoboot] mtk_skip_netrecovery=1, skip net recovery probe\n");
+		do_probe = 0;
+	}
+
+	if (do_probe) {
+		int retry;
+		int rc;
+
+		if (!probe)
+			probe = "192.168.1.2";
+
+		printf("[mtkautoboot] init network, checking recovery host %s ...\n", probe);
+
+		/* Provide sane network defaults for ping when not set */
+		if (!env_get("ipaddr"))
+			env_set("ipaddr", "192.168.1.1");
+		if (!env_get("serverip"))
+			env_set("serverip", "192.168.1.2");
+		if (!env_get("netmask"))
+			env_set("netmask", "255.255.255.0");
+
+		snprintf(cmd, sizeof(cmd), "ping %s", probe);
+		for (retry = 0; retry < 3; retry++) {
+			rc = run_command(cmd, 0);
+			if (rc == 0) {
+				printf("[mtkautoboot] host %s reachable, entering web recovery\n", probe);
+				run_command("httpd", 0);
+				return 0;
+			}
+			mdelay(500);
+		}
+	}
+}
+#endif /* CONFIG_MTKAUTOBOOT_NET_RECOVERY */
+
 #ifdef CONFIG_FAILSAFE_ON_BUTTON
 #ifndef MT7621_USE_GPIO_LED
 	struct udevice *led1, *led2;

@@ -25,12 +25,12 @@ on:
         description: 'Reset Button GPIO'
         required: true
         type: number
-        default: -1
+        default: 18
       sysled_pin:
         description: 'System LED GPIO'
         required: true
         type: number
-        default: -1
+        default: 29
       cpufreq:
         description: 'CPU Frequency (400 - 1200)'
         required: true
@@ -70,8 +70,8 @@ on:
         required: true
         type: choice
         options:
-        - '57600'
         - '115200'
+        - '57600'
 
 jobs:
   build:

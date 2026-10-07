@@ -52,3 +52,15 @@ config ENV_ERASE_UPDATE
 	bool "Erase u-boot environment after upgrading u-boot"
 	default n
 	depends on !ENV_IS_NOWHERE
+
+config MTKAUTOBOOT_NET_RECOVERY
+	bool "Enable network web recovery probe in mtkautoboot"
+	default n
+	depends on NET
+	help
+	  When enabled, mtkautoboot will ping the host given by env
+	  "mtk_recovery_probe" (default "192.168.1.2") after network
+	  init. If reachable, U-Boot enters httpd (web recovery mode)
+	  instead of continuing to boot the firmware. This allows a
+	  recovery client on the network to bring the device into web
+	  recovery on power-cycle.
